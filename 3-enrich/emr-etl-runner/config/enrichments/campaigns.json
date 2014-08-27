@@ -6,14 +6,14 @@
 		"name": "campaigns",
 		"vendor": "com.snowplowanalytics.snowplow",		
 		"enabled": false,
-		"properties": {
+		"parameters": {
 			"mapping": "static",
 			"fields": {
-				"mktMedium": ["medium"],
-				"mktSource": ["source"],
-				"mktTerm": ["term"],
-				"mktContent": ["content"],
-				"mktCampaign": ["campaign"],
+				"mktMedium": ["utm_medium"],
+				"mktSource": ["utm_source"],
+				"mktTerm": ["utm_term"],
+				"mktContent": ["utm_content"],
+				"mktCampaign": ["utm_campaign"],
 			}
 		}
 	}
