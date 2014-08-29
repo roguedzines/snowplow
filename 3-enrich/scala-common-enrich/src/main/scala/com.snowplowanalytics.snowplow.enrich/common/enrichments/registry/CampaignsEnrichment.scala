@@ -82,41 +82,14 @@ object CampaignsEnrichment extends ParseableEnrichment {
 
 }
 
-class MarketingCampaign {
-  @BeanProperty var source: String = _
-  @BeanProperty var medium: String = _
-  @BeanProperty var term: String = _
-  @BeanProperty var content: String = _
-  @BeanProperty var campaign: String = _
-
-  override def equals(other: Any): Boolean = other match {
-    case that: MarketingCampaign =>
-      (that canEqual this) &&
-      source == that.source &&
-      medium == that.medium &&
-      term == that.term &&
-      content == that.content &&
-      campaign == that.campaign
-    case _ => false
-  }
-  def canEqual(other: Any): Boolean = other.isInstanceOf[MarketingCampaign]
-  
-  // No reflection for perf reasons.
-  override def hashCode: Int = new HashCodeBuilder()
-    .append(source)
-    .append(medium)
-    .append(term)
-    .append(content)
-    .append(campaign)
-    .toHashCode()
-  override def toString: String = new ToStringBuilder(this)
-    .append("source", source)
-    .append("medium", medium)
-    .append("term", term)
-    .append("content", content)
-    .append("campaign", campaign)
-    .toString()
-}
+// TODO docstring
+case class MarketingCampaign(
+  medium:   Option[String],
+  source:   Option[String],
+  term:     Option[String],
+  content:  Option[String],
+  campaign: Option[String]  
+  )
 
 /**
  * Config for a campaigns enrichment
@@ -146,7 +119,7 @@ case class CampaignsEnrichment(
    *         boxed in a Scalaz
    *         Validation
    */
-  def extractMarketingFields(uri: URI, encoding: String): ValidationNel[String, MarketingCampaign] = {
+  def orderedExtraction(uri: URI, encoding: String): ValidationNel[String, MarketingCampaign] = {
 
     val parameters = try {
       URLEncodedUtils.parse(uri, encoding)
@@ -154,21 +127,18 @@ case class CampaignsEnrichment(
       case _ => return "Could not parse uri [%s]".format(uri).failNel[MarketingCampaign]
     }
 
-    val decodeString: TransformFunc = CU.decodeString(encoding, _, _)
-
-    // We use a TransformMap which takes the format:
-    // "source key" -> (transformFunction, field(s) to set)
-    val transformMap: TransformMap = List(
-      mktSource.map((_, (decodeString, "source"))).toMap,
-      mktMedium.map((_, (decodeString, "medium"))).toMap,
-      mktTerm.map((_, (decodeString, "term"))).toMap,
-      mktContent.map((_, (decodeString, "content"))).toMap,
-      mktCampaign.map((_, (decodeString, "campaign"))).toMap
-    ).reduce(_ ++ _)
-
+    // Querystring map
     val sourceMap: SourceMap = parameters.map(p => (p.getName -> p.getValue)).toList.toMap
 
-    MapTransformer.generate[MarketingCampaign](sourceMap, transformMap)
-  }
+    val decodeString: TransformFunc = CU.decodeString(encoding, _, _)
+
+    val medium = mktMedium.find(sourceMap.contains(_)).map(sourceMap(_))
+    val source = mktSource.find(sourceMap.contains(_)).map(sourceMap(_))
+    val term = mktTerm.find(sourceMap.contains(_)).map(sourceMap(_))
+    val content = mktContent.find(sourceMap.contains(_)).map(sourceMap(_))
+    val campaign = mktCampaign.find(sourceMap.contains(_)).map(sourceMap(_))
+
+    MarketingCampaign(medium, source, term, content, campaign).success.toValidationNel
+ }   
 
 }
