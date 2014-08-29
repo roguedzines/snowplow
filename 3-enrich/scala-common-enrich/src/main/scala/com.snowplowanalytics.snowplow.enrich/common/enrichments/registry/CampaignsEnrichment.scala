@@ -20,6 +20,16 @@ package registry
 // Java
 import java.net.URI
 
+// Scala
+import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
+
+// Utils
+import org.apache.http.NameValuePair
+import org.apache.http.client.utils.URLEncodedUtils
+import org.apache.commons.lang3.builder.ToStringBuilder
+import org.apache.commons.lang3.builder.HashCodeBuilder
+
 // Maven Artifact
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 
@@ -59,35 +69,106 @@ object CampaignsEnrichment extends ParseableEnrichment {
   def parse(config: JValue, schemaKey: SchemaKey): ValidatedNelMessage[CampaignsEnrichment] = {
     isParseable(config, schemaKey).flatMap( conf => {
       (for {
-        medium    <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "mktMedium")
-        source    <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "mktSource")
-        term      <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "mktTerm")
-        content   <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "mktContent")
-        campaign  <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "mktCampaign")
-        enrich =  CampaignsEnrichment(medium.toSet, source.toSet, term.toSet, content.toSet, campaign.toSet)
+        medium    <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "fields", "mktMedium")
+        source    <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "fields", "mktSource")
+        term      <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "fields", "mktTerm")
+        content   <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "fields", "mktContent")
+        campaign  <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "fields", "mktCampaign")
+
+        enrich =  CampaignsEnrichment(medium, source, term, content, campaign)
       } yield enrich).toValidationNel
     })
   }
 
 }
 
+class MarketingCampaign {
+  @BeanProperty var source: String = _
+  @BeanProperty var medium: String = _
+  @BeanProperty var term: String = _
+  @BeanProperty var content: String = _
+  @BeanProperty var campaign: String = _
+
+  override def equals(other: Any): Boolean = other match {
+    case that: MarketingCampaign =>
+      (that canEqual this) &&
+      source == that.source &&
+      medium == that.medium &&
+      term == that.term &&
+      content == that.content &&
+      campaign == that.campaign
+    case _ => false
+  }
+  def canEqual(other: Any): Boolean = other.isInstanceOf[MarketingCampaign]
+  
+  // No reflection for perf reasons.
+  override def hashCode: Int = new HashCodeBuilder()
+    .append(source)
+    .append(medium)
+    .append(term)
+    .append(content)
+    .append(campaign)
+    .toHashCode()
+  override def toString: String = new ToStringBuilder(this)
+    .append("source", source)
+    .append("medium", medium)
+    .append("term", term)
+    .append("content", content)
+    .append("campaign", campaign)
+    .toString()
+}
+
 /**
- * Config for a referer_parser enrichment
+ * Config for a campaigns enrichment
  *
+ * TODO docstring
  * @param domains List of internal domains
  */
 case class CampaignsEnrichment(
-  mktMedium:   Set[String],
-  mktSource:   Set[String],
-  mktTerm:     Set[String],
-  mktContent:  Set[String],
-  mktCampaign: Set[String]
+  mktMedium:   List[String],
+  mktSource:   List[String],
+  mktTerm:     List[String],
+  mktContent:  List[String],
+  mktCampaign: List[String]
   ) extends Enrichment {
 
   val version = new DefaultArtifactVersion("0.1.0")
 
-  def extractFields(uri: URI) = {
+  /**
+   * Extract the marketing fields from a URL.
+   *
+   * @param uri The URI to extract
+   *        marketing fields from
+   * @param encoding The encoding of
+   *        the URI being parsed
+   * @return the MarketingCampaign
+   *         or an error message,
+   *         boxed in a Scalaz
+   *         Validation
+   */
+  def extractMarketingFields(uri: URI, encoding: String): ValidationNel[String, MarketingCampaign] = {
 
+    val parameters = try {
+      URLEncodedUtils.parse(uri, encoding)
+    } catch {
+      case _ => return "Could not parse uri [%s]".format(uri).failNel[MarketingCampaign]
+    }
+
+    val decodeString: TransformFunc = CU.decodeString(encoding, _, _)
+
+    // We use a TransformMap which takes the format:
+    // "source key" -> (transformFunction, field(s) to set)
+    val transformMap: TransformMap = List(
+      mktSource.map((_, (decodeString, "source"))).toMap,
+      mktMedium.map((_, (decodeString, "medium"))).toMap,
+      mktTerm.map((_, (decodeString, "term"))).toMap,
+      mktContent.map((_, (decodeString, "content"))).toMap,
+      mktCampaign.map((_, (decodeString, "campaign"))).toMap
+    ).reduce(_ ++ _)
+
+    val sourceMap: SourceMap = parameters.map(p => (p.getName -> p.getValue)).toList.toMap
+
+    MapTransformer.generate[MarketingCampaign](sourceMap, transformMap)
   }
 
 }

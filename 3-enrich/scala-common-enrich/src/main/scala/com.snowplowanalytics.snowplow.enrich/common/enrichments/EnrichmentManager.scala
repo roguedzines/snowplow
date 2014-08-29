@@ -302,7 +302,7 @@ object EnrichmentManager {
     val campaign = pageUri.fold(
       e => unitSuccessNel, // No fields updated
       uri => uri match {
-        case Some(u) =>
+        case Some(u) => unitSuccessNel/*
           WAE.extractMarketingFields(u, raw.encoding).flatMap(cmp => {
             event.mkt_medium = cmp.medium
             event.mkt_source = cmp.source
@@ -310,7 +310,26 @@ object EnrichmentManager {
             event.mkt_content = cmp.content
             event.mkt_campaign = cmp.campaign
             cmp.success
-            })
+            })*/
+        case None => unitSuccessNel // No fields updated
+        })
+
+    pageUri.fold(
+      e => unitSuccessNel, // No fields updated
+      uri => uri match {
+        case Some(u) =>
+          registry.getCampaignsEnrichment match {
+            case Some(ce) =>
+              ce.extractMarketingFields(u, raw.encoding).flatMap(cmp => {
+                event.mkt_medium = cmp.medium
+                event.mkt_source = cmp.source
+                event.mkt_term = cmp.term
+                event.mkt_content = cmp.content
+                event.mkt_campaign = cmp.campaign
+                cmp.success                
+                })
+            case None => unitSuccess
+          }
         case None => unitSuccessNel // No fields updated
         })
 
