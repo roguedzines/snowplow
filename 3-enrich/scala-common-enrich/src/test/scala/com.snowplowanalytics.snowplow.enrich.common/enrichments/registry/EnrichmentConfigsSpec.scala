@@ -120,9 +120,9 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
           "fields": {
             "mktMedium": ["utm_medium", "medium"],
             "mktSource": ["utm_source", "source"],
-            "mktTerm": ["utm_term", "legacy_term"],
+            "mktTerm": ["utm_term"],
             "mktContent": [],
-            "mktCampaign": ["utm_campaign", "cid", "legacy_campaign"]
+            "mktCampaign": ["utm _ campaign", "CID", "legacy-campaign!?-`@#$%^&*()=\\][}{/.,<>~|"]
           }
         }
       }""")
@@ -134,7 +134,7 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
         List("utm_source", "source"),
         List("utm_term"),
         List(),
-        List("utm_campaign", "cid", "legacy_campaign")
+        List("utm _ campaign", "CID", "legacy-campaign!?-`@#$%^&*()=\\][}{/.,<>~|")
       )
 
       val result = CampaignsEnrichment.parse(campaignsEnrichment, schemaKey)
@@ -142,7 +142,5 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
 
     }      
   }
-
-  // TODO: a test in HDFS mode too?
 
 }
