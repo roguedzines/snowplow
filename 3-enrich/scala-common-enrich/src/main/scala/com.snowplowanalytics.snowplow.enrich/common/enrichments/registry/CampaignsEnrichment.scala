@@ -82,7 +82,16 @@ object CampaignsEnrichment extends ParseableEnrichment {
 
 }
 
-// TODO docstring
+/**
+ * Class for a marketing campaign
+ *
+ * @param medium Campaign medium
+ * @param source Campaign source
+ * @param term Campaign term
+ * @param content Campaign content
+ * @param campaign Campaign name
+ *
+ */
 case class MarketingCampaign(
   medium:   Option[String],
   source:   Option[String],
@@ -94,8 +103,11 @@ case class MarketingCampaign(
 /**
  * Config for a campaigns enrichment
  *
- * TODO docstring
- * @param domains List of internal domains
+ * @param mktMedium List of marketing medium parameters
+ * @param mktSource List of marketing source parameters
+ * @param mktTerm List of marketing term parameters
+ * @param mktContent List of marketing content parameters
+ * @param mktCampaign List of marketing campaign parameters
  */
 case class CampaignsEnrichment(
   mktMedium:   List[String],
@@ -119,7 +131,7 @@ case class CampaignsEnrichment(
    *         boxed in a Scalaz
    *         Validation
    */
-  def orderedExtraction(uri: URI, encoding: String): ValidationNel[String, MarketingCampaign] = {
+  def extractMarketingFields(uri: URI, encoding: String): ValidationNel[String, MarketingCampaign] = {
 
     val parameters = try {
       URLEncodedUtils.parse(uri, encoding)
@@ -139,6 +151,6 @@ case class CampaignsEnrichment(
     val campaign = mktCampaign.find(sourceMap.contains(_)).map(sourceMap(_))
 
     MarketingCampaign(medium, source, term, content, campaign).success.toValidationNel
- }   
+  }   
 
 }

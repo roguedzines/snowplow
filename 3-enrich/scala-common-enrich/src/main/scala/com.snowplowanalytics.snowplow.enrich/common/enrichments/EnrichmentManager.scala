@@ -305,13 +305,13 @@ object EnrichmentManager {
         case Some(u) =>
           registry.getCampaignsEnrichment match {
             case Some(ce) =>
-              ce.orderedExtraction(u, raw.encoding).flatMap(cmp => {
+              ce.extractMarketingFields(u, raw.encoding).flatMap(cmp => {
                 event.mkt_medium = cmp.medium.orNull
                 event.mkt_source = cmp.source.orNull
                 event.mkt_term = cmp.term.orNull
                 event.mkt_content = cmp.content.orNull
                 event.mkt_campaign = cmp.campaign.orNull
-                cmp.success                
+                cmp.success
                 })
             case None => unitSuccessNel
           }
