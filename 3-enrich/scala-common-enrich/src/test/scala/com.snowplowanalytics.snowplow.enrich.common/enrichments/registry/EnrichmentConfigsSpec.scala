@@ -41,7 +41,7 @@ import org.specs2.scalaz.ValidationMatchers
 class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
 
   "Parsing a valid anon_ip enrichment JSON" should {
-    "successfully construct an AnonIpEnrichmentConfig case class" in {
+    "successfully construct an AnonIpEnrichment case class" in {
 
       val ipAnonJson = parse("""{
         "enabled": true,
@@ -59,7 +59,7 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
   }
 
   "Parsing a valid ip_lookups enrichment JSON" should {
-    "successfully construct a GeoIpEnrichmentConfig case class" in {
+    "successfully construct a GeoIpEnrichment case class" in {
 
       val ipToGeoJson = parse("""{
         "enabled": true,
@@ -88,7 +88,7 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
   }
 
   "Parsing a valid referer_parser enrichment JSON" should {
-    "successfully construct a GeoIpEnrichmentConfig case class" in {
+    "successfully construct a RefererParserEnrichment case class" in {
 
       val refererParserJson = parse("""{
         "enabled": true,
@@ -105,6 +105,39 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
       val expected = RefererParserEnrichment(List("www.subdomain1.snowplowanalytics.com", "www.subdomain2.snowplowanalytics.com"))
 
       val result = RefererParserEnrichment.parse(refererParserJson, schemaKey)
+      result must beSuccessful(expected)
+
+    }      
+  }
+
+  "Parsing a valid campaigns enrichment JSON" should {
+    "successfully construct a CampaignsEnrichment case class" in {
+
+      val campaignsEnrichment = parse("""{
+        "enabled": true,
+        "parameters": {
+          "mapping": "static",
+          "fields": {
+            "mktMedium": ["utm_medium", "medium"],
+            "mktSource": ["utm_source", "source"],
+            "mktTerm": ["utm_term", "legacy_term"],
+            "mktContent": [],
+            "mktCampaign": ["utm_campaign", "cid", "legacy_campaign"]
+          }
+        }
+      }""")
+
+      val schemaKey = SchemaKey("com.snowplowanalytics.snowplow", "campaigns", "jsonschema", "1-0-0")
+
+      val expected = CampaignsEnrichment(
+        List("utm_medium", "medium"),
+        List("utm_source", "source"),
+        List("utm_term"),
+        List(),
+        List("utm_campaign", "cid", "legacy_campaign")
+      )
+
+      val result = CampaignsEnrichment.parse(campaignsEnrichment, schemaKey)
       result must beSuccessful(expected)
 
     }      
