@@ -25,10 +25,7 @@ import scala.collection.JavaConversions._
 import scala.reflect.BeanProperty
 
 // Utils
-import org.apache.http.NameValuePair
 import org.apache.http.client.utils.URLEncodedUtils
-import org.apache.commons.lang3.builder.ToStringBuilder
-import org.apache.commons.lang3.builder.HashCodeBuilder
 
 // Maven Artifact
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
@@ -42,12 +39,13 @@ import org.json4s.JValue
 
 // Iglu
 import iglu.client.SchemaKey
-import iglu.client.validation.ProcessingMessageMethods._
 
 // This project
 import utils.{ConversionUtils => CU}
-import utils.MapTransformer
-import utils.MapTransformer._
+import utils.MapTransformer.{
+  SourceMap,
+  TransformFunc
+}
 import utils.ScalazJson4sUtils
 
 /**
