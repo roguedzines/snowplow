@@ -45,6 +45,7 @@ object MasterCfLinesSpec {
               good.PagePingCfLineSpec.lines ++        // 1 good
               good.PageViewCfLineSpec.lines ++        // 1 good
               good.RefererParserCfLineSpec.lines ++   // 1 good
+              good.CampaignsCfLineSpec.lines ++   // 1 good
               good.StructEventCfLineSpec.lines ++     // 1 good
               good.UnstructEventCfLineSpec.lines ++   // 1 good
               good.TransactionCfLineSpec.lines ++     // 1 good
@@ -52,7 +53,7 @@ object MasterCfLinesSpec {
               misc.DiscardableCfLinesSpec.lines       // 3 discarded
 
   object expected {
-    val goodCount = 14
+    val goodCount = 15
     val badCount = 7
   }
 }
