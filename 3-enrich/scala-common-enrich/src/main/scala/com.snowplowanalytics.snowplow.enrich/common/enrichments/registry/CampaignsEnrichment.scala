@@ -120,6 +120,18 @@ case class CampaignsEnrichment(
   val version = new DefaultArtifactVersion("0.1.0")
 
   /**
+   * Find the first string in parameterList which is a key of
+   * sourceMap and return the value of that key in sourceMap.
+   *
+   * @param parameterList List of accepted campaign parameter
+   *        names in order of decreasing precedence
+   * @param sourceMap Map of key-value pairs in URI querystring
+   * @return Option boxing the value of the campaign parameter
+   */
+  private def getFirstParameter(parameterList: List[String], sourceMap: SourceMap): Option[String] =
+    parameterList.find(sourceMap.contains(_)).map(sourceMap(_))
+
+  /**
    * Extract the marketing fields from a URL.
    *
    * @param uri The URI to extract
@@ -144,11 +156,11 @@ case class CampaignsEnrichment(
 
     val decodeString: TransformFunc = CU.decodeString(encoding, _, _)
 
-    val medium = mktMedium.find(sourceMap.contains(_)).map(sourceMap(_))
-    val source = mktSource.find(sourceMap.contains(_)).map(sourceMap(_))
-    val term = mktTerm.find(sourceMap.contains(_)).map(sourceMap(_))
-    val content = mktContent.find(sourceMap.contains(_)).map(sourceMap(_))
-    val campaign = mktCampaign.find(sourceMap.contains(_)).map(sourceMap(_))
+    val medium = getFirstParameter(mktMedium, sourceMap)
+    val source = getFirstParameter(mktSource, sourceMap)
+    val term = getFirstParameter(mktTerm, sourceMap)
+    val content = getFirstParameter(mktContent, sourceMap)
+    val campaign = getFirstParameter(mktCampaign, sourceMap)
 
     MarketingCampaign(medium, source, term, content, campaign).success.toValidationNel
   }   
