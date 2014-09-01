@@ -32,11 +32,11 @@ class CampaignsEnrichmentSpec extends Specification with ValidationMatchers { de
 
   "This is a specification to test the CampaignsEnrichment"                                                 ^
                                                                                                            p^
-  "extractMarketingFields should create an empty MarketingCampaign if no campaign fields are specified" ! e1^
-  "extractMarketingFields should create a MarketingCampaign using the standard Google-style settings"   ! e2^
-  "extractMarketingFields should create a MarketingCampaign using the standard Omniture settings"       ! e3^
-  "extractMarketingFields should create a MarketingCampaign using the correct order of precedence"      ! e4^
-                                                                                                        end
+  "extractMarketingFields should create an empty MarketingCampaign if no campaign fields are specified"     ! e1^
+  "extractMarketingFields should create a MarketingCampaign using the standard Google-style settings"       ! e2^
+  "extractMarketingFields should create a MarketingCampaign using the standard Omniture settings"           ! e3^
+  "extractMarketingFields should create a MarketingCampaign using the correct order of precedence"          ! e4^
+                                                                                                          end
 
   val google_uri = "http://www.example.com?utm_source=GoogleSearch&utm_medium=cpc&utm_term=native+american+tarot+deck&utm_content=39254295088&utm_campaign=uk-tarot--native-american"
   val omniture_uri = "http://www.example.com?cid=uk-tarot--native-american"
