@@ -38,7 +38,6 @@ import enrichments.{EventEnrichments => EE}
 import enrichments.{MiscEnrichments => ME}
 import enrichments.{ClientEnrichments => CE}
 import web.{PageEnrichments => WPE}
-import web.{AttributionEnrichments => WAE}
 
 /**
  * A module to hold our enrichment process.
