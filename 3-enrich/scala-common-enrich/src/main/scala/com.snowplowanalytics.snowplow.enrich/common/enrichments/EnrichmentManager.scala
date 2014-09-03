@@ -302,7 +302,7 @@ object EnrichmentManager {
       e => unitSuccessNel, // No fields updated
       uri => uri match {
         case Some(u) =>
-          registry.getCampaignsEnrichment match {
+          registry.getCampaignAttributionEnrichment match {
             case Some(ce) =>
               ce.extractMarketingFields(u, raw.encoding).flatMap(cmp => {
                 event.mkt_medium = cmp.medium.orNull

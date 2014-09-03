@@ -253,10 +253,10 @@ object JobSpecHelpers {
                 |}  
               |},
               |{
-                |"schema": "iglu:com.snowplowanalytics.snowplow/campaigns/jsonschema/1-0-0",
+                |"schema": "iglu:com.snowplowanalytics.snowplow/campaign_attribution/jsonschema/1-0-0",
                 |"data": {
                   |"vendor": "com.snowplowanalytics.snowplow",
-                  |"name": "campaigns",
+                  |"name": "campaign_attribution",
                   |"enabled": true,
                   |"parameters": {
                     |"mapping": "static",

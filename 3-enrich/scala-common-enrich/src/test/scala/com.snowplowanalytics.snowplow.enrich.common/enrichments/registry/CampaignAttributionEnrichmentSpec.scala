@@ -26,11 +26,11 @@ import scalaz._
 import Scalaz._
 
 /**
- * Tests CampaignsEnrichment
+ * Tests CampaignAttributionEnrichment
  */
-class CampaignsEnrichmentSpec extends Specification with ValidationMatchers { def is =
+class CampaignAttributionEnrichmentSpec extends Specification with ValidationMatchers { def is =
 
-  "This is a specification to test the CampaignsEnrichment"                                                 ^
+  "This is a specification to test the CampaignAttributionEnrichment"                                                 ^
                                                                                                            p^
   "extractMarketingFields should create an empty MarketingCampaign if no campaign fields are specified"     ! e1^
   "extractMarketingFields should create a MarketingCampaign using the standard Google-style settings"       ! e2^
@@ -43,7 +43,7 @@ class CampaignsEnrichmentSpec extends Specification with ValidationMatchers { de
   val heterogeneous_uri = "http://www.example.com?utm_source=GoogleSearch&source=bad_source&utm_medium=cpc&legacy_term=bad_term&utm_term=native+american+tarot+deck&legacy_campaign=bad_campaign&cid=uk-tarot--native-american"
 
   def e1 = {
-    val config = CampaignsEnrichment(
+    val config = CampaignAttributionEnrichment(
       List(),
       List(),
       List(),
@@ -55,7 +55,7 @@ class CampaignsEnrichmentSpec extends Specification with ValidationMatchers { de
   }
 
   def e2 = {
-    val config = CampaignsEnrichment(
+    val config = CampaignAttributionEnrichment(
       List("utm_medium"),
       List("utm_source"),
       List("utm_term"),
@@ -67,7 +67,7 @@ class CampaignsEnrichmentSpec extends Specification with ValidationMatchers { de
   }
 
   def e3 = {
-    val config = CampaignsEnrichment(
+    val config = CampaignAttributionEnrichment(
       List(),
       List(),
       List(),
@@ -79,7 +79,7 @@ class CampaignsEnrichmentSpec extends Specification with ValidationMatchers { de
   }
 
   def e4 = {
-    val config = CampaignsEnrichment(
+    val config = CampaignAttributionEnrichment(
       List("utm_medium", "medium"),
       List("utm_source", "source"),
       List("utm_term", "legacy_term"),

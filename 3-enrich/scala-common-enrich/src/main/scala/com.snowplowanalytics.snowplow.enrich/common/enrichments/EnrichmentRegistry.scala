@@ -41,7 +41,7 @@ import registry.{
   AnonIpEnrichment,
   IpLookupsEnrichment,
   RefererParserEnrichment,
-  CampaignsEnrichment
+  CampaignAttributionEnrichment
 }
 import utils.ScalazJson4sUtils
 
@@ -122,8 +122,8 @@ object EnrichmentRegistry {
             AnonIpEnrichment.parse(enrichmentConfig, schemaKey).map((nm, _).some)
           } else if (nm == "referer_parser") {
             RefererParserEnrichment.parse(enrichmentConfig, schemaKey).map((nm, _).some)            
-          } else if (nm == "campaigns") {
-            CampaignsEnrichment.parse(enrichmentConfig, schemaKey).map((nm, _).some)            
+          } else if (nm == "campaign_attribution") {
+            CampaignAttributionEnrichment.parse(enrichmentConfig, schemaKey).map((nm, _).some)            
           } else {
             None.success // Enrichment is not recognized yet
           }
@@ -176,13 +176,13 @@ case class EnrichmentRegistry(private val configs: EnrichmentMap) {
     getEnrichment[RefererParserEnrichment]("referer_parser")
 
   /**
-   * Returns an Option boxing the CampaignsEnrichment
+   * Returns an Option boxing the CampaignAttributionEnrichment
    * config value if present, or None if not
    *
-   * @return Option boxing the CampaignsEnrichment instance
+   * @return Option boxing the CampaignAttributionEnrichment instance
    */
-  def getCampaignsEnrichment: Option[CampaignsEnrichment] = 
-    getEnrichment[CampaignsEnrichment]("campaigns")
+  def getCampaignAttributionEnrichment: Option[CampaignAttributionEnrichment] = 
+    getEnrichment[CampaignAttributionEnrichment]("campaign_attribution")
 
   /**
    * Returns an Option boxing an Enrichment

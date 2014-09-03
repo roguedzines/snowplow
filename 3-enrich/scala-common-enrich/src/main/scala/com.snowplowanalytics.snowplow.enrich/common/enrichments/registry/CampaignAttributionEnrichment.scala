@@ -50,21 +50,21 @@ import utils.ScalazJson4sUtils
 
 /**
  * Companion object. Lets us create a
- * CampaignsEnrichment from a JValue
+ * CampaignAttributionEnrichment from a JValue
  */
-object CampaignsEnrichment extends ParseableEnrichment {
+object CampaignAttributionEnrichment extends ParseableEnrichment {
 
-  val supportedSchemaKey = SchemaKey("com.snowplowanalytics.snowplow", "campaigns", "jsonschema", "1-0-0")
+  val supportedSchemaKey = SchemaKey("com.snowplowanalytics.snowplow", "campaign_attribution", "jsonschema", "1-0-0")
 
   /**
-   * Creates a CampaignsEnrichment instance from a JValue.
+   * Creates a CampaignAttributionEnrichment instance from a JValue.
    * 
    * @param config The referer_parser enrichment JSON
    * @param schemaKey The SchemaKey provided for the enrichment
    *        Must be a supported SchemaKey for this enrichment   
-   * @return a configured CampaignsEnrichment instance
+   * @return a configured CampaignAttributionEnrichment instance
    */
-  def parse(config: JValue, schemaKey: SchemaKey): ValidatedNelMessage[CampaignsEnrichment] = {
+  def parse(config: JValue, schemaKey: SchemaKey): ValidatedNelMessage[CampaignAttributionEnrichment] = {
     isParseable(config, schemaKey).flatMap( conf => {
       (for {
         medium    <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "fields", "mktMedium")
@@ -73,7 +73,7 @@ object CampaignsEnrichment extends ParseableEnrichment {
         content   <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "fields", "mktContent")
         campaign  <- ScalazJson4sUtils.extract[List[String]](config, "parameters", "fields", "mktCampaign")
 
-        enrich =  CampaignsEnrichment(medium, source, term, content, campaign)
+        enrich =  CampaignAttributionEnrichment(medium, source, term, content, campaign)
       } yield enrich).toValidationNel
     })
   }
@@ -99,7 +99,7 @@ case class MarketingCampaign(
   )
 
 /**
- * Config for a campaigns enrichment
+ * Config for a campaign_attribution enrichment
  *
  * @param mktMedium List of marketing medium parameters
  * @param mktSource List of marketing source parameters
@@ -107,7 +107,7 @@ case class MarketingCampaign(
  * @param mktContent List of marketing content parameters
  * @param mktCampaign List of marketing campaign parameters
  */
-case class CampaignsEnrichment(
+case class CampaignAttributionEnrichment(
   mktMedium:   List[String],
   mktSource:   List[String],
   mktTerm:     List[String],

@@ -110,10 +110,10 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
     }      
   }
 
-  "Parsing a valid campaigns enrichment JSON" should {
-    "successfully construct a CampaignsEnrichment case class" in {
+  "Parsing a valid campaign_attribution enrichment JSON" should {
+    "successfully construct a CampaignAttributionEnrichment case class" in {
 
-      val campaignsEnrichment = parse("""{
+      val campaignAttributionEnrichmentJson = parse("""{
         "enabled": true,
         "parameters": {
           "mapping": "static",
@@ -127,9 +127,9 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
         }
       }""")
 
-      val schemaKey = SchemaKey("com.snowplowanalytics.snowplow", "campaigns", "jsonschema", "1-0-0")
+      val schemaKey = SchemaKey("com.snowplowanalytics.snowplow", "campaign_attribution", "jsonschema", "1-0-0")
 
-      val expected = CampaignsEnrichment(
+      val expected = CampaignAttributionEnrichment(
         List("utm_medium", "medium"),
         List("utm_source", "source"),
         List("utm_term"),
@@ -137,7 +137,7 @@ class EnrichmentConfigsSpec extends Specification with ValidationMatchers {
         List("utm _ campaign", "CID", "legacy-campaign!?-`@#$%^&*()=\\][}{/.,<>~|")
       )
 
-      val result = CampaignsEnrichment.parse(campaignsEnrichment, schemaKey)
+      val result = CampaignAttributionEnrichment.parse(campaignAttributionEnrichmentJson, schemaKey)
       result must beSuccessful(expected)
 
     }      

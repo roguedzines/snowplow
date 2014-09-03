@@ -33,7 +33,7 @@ import JobSpecHelpers._
  * Holds the input and expected data
  * for the test.
  */
-object CampaignsCfLineSpec {
+object CampaignAttributionCfLineSpec {
 
   // October 2013: all fields are now double-encoded
   val lines = Lines(
@@ -162,17 +162,17 @@ object CampaignsCfLineSpec {
  * For details:
  * https://forums.aws.amazon.com/thread.jspa?threadID=134017&tstart=0#
  */
-class CampaignsCfLineSpec extends Specification {
+class CampaignAttributionCfLineSpec extends Specification {
 
   "A job which processes a CloudFront file containing 1 valid page ping" should {
     EtlJobSpec("cloudfront", "1", false, List("geo")).
-      source(MultipleTextLineFiles("inputFolder"), CampaignsCfLineSpec.lines).
+      source(MultipleTextLineFiles("inputFolder"), CampaignAttributionCfLineSpec.lines).
       sink[TupleEntry](Tsv("outputFolder")){ buf : Buffer[TupleEntry] =>
         "correctly output 1 page ping" in {
           buf.size must_== 1
           val actual = buf.head
-          for (idx <- CampaignsCfLineSpec.expected.indices) {
-            actual.getString(idx) must beFieldEqualTo(CampaignsCfLineSpec.expected(idx), withIndex = idx)
+          for (idx <- CampaignAttributionCfLineSpec.expected.indices) {
+            actual.getString(idx) must beFieldEqualTo(CampaignAttributionCfLineSpec.expected(idx), withIndex = idx)
           }
         }
       }.
