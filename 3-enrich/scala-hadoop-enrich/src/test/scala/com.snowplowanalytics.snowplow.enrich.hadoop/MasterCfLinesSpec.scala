@@ -49,7 +49,7 @@ object MasterCfLinesSpec {
               good.StructEventCfLineSpec.lines ++         // 1 good
               good.UnstructEventCfLineSpec.lines ++       // 1 good
               good.TransactionCfLineSpec.lines ++         // 1 good
-              good.TransactionItemCfLineSpec.lines ++     // 1 good = 14 GOOD
+              good.TransactionItemCfLineSpec.lines ++     // 1 good = 15 GOOD
               misc.DiscardableCfLinesSpec.lines           // 3 discarded
 
   object expected {
@@ -70,7 +70,7 @@ class MasterCfLinesSpec extends Specification {
     EtlJobSpec("cloudfront", "1", false, List("geo")). // Technically CljTomcatLineSpec isn't CloudFront format but won't break this test
       source(MultipleTextLineFiles("inputFolder"), MasterCfLinesSpec.lines).
       sink[String](Tsv("outputFolder")){ output =>
-        "write 14 events" in {
+        "write 15 events" in {
           output.size must_== MasterCfLinesSpec.expected.goodCount
         }
       }.
