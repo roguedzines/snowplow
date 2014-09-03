@@ -32,27 +32,28 @@ import JobSpecHelpers._
 object MasterCfLinesSpec {
 
   // Concatenate ALL lines from ALL other jobs
-  val lines = bad.BadTrackerCfLinesSpec.lines ++      // 3 bad
-              bad.CorruptedCfLinesSpec.lines ++       // 1 bad
-              bad.InvalidCfLinesSpec.lines ++         // 3 bad  = 7 BAD
-              good.Aug2013CfLineSpec.lines ++         // 1 good
-              good.Sep2013CfLineSpec.lines ++         // 1 good
-              good.Oct2013CfLineSpec.lines ++         // 1 good
-              good.LateOct2013CfLineSpec.lines ++     // 1 good
-              good.Apr2014CfLineSpec.lines ++         // 1 good
-              good.FutureCfLineSpec.lines ++          // 1 good
-              good.CljTomcatLineSpec.lines ++         // 1 good
-              good.PagePingCfLineSpec.lines ++        // 1 good
-              good.PageViewCfLineSpec.lines ++        // 1 good
-              good.RefererParserCfLineSpec.lines ++   // 1 good
-              good.StructEventCfLineSpec.lines ++     // 1 good
-              good.UnstructEventCfLineSpec.lines ++   // 1 good
-              good.TransactionCfLineSpec.lines ++     // 1 good
-              good.TransactionItemCfLineSpec.lines ++ // 1 good = 14 GOOD
-              misc.DiscardableCfLinesSpec.lines       // 3 discarded
+  val lines = bad.BadTrackerCfLinesSpec.lines ++          // 3 bad
+              bad.CorruptedCfLinesSpec.lines ++           // 1 bad
+              bad.InvalidCfLinesSpec.lines ++             // 3 bad  = 7 BAD
+              good.Aug2013CfLineSpec.lines ++             // 1 good
+              good.Sep2013CfLineSpec.lines ++             // 1 good
+              good.Oct2013CfLineSpec.lines ++             // 1 good
+              good.LateOct2013CfLineSpec.lines ++         // 1 good
+              good.Apr2014CfLineSpec.lines ++             // 1 good
+              good.FutureCfLineSpec.lines ++              // 1 good
+              good.CljTomcatLineSpec.lines ++             // 1 good
+              good.PagePingCfLineSpec.lines ++            // 1 good
+              good.PageViewCfLineSpec.lines ++            // 1 good
+              good.RefererParserCfLineSpec.lines ++       // 1 good
+              good.CampaignAttributionCfLineSpec.lines ++ // 1 good
+              good.StructEventCfLineSpec.lines ++         // 1 good
+              good.UnstructEventCfLineSpec.lines ++       // 1 good
+              good.TransactionCfLineSpec.lines ++         // 1 good
+              good.TransactionItemCfLineSpec.lines ++     // 1 good = 15 GOOD
+              misc.DiscardableCfLinesSpec.lines           // 3 discarded
 
   object expected {
-    val goodCount = 14
+    val goodCount = 15
     val badCount = 7
   }
 }
@@ -69,7 +70,7 @@ class MasterCfLinesSpec extends Specification {
     EtlJobSpec("cloudfront", "1", false, List("geo")). // Technically CljTomcatLineSpec isn't CloudFront format but won't break this test
       source(MultipleTextLineFiles("inputFolder"), MasterCfLinesSpec.lines).
       sink[String](Tsv("outputFolder")){ output =>
-        "write 14 events" in {
+        "write 15 events" in {
           output.size must_== MasterCfLinesSpec.expected.goodCount
         }
       }.
